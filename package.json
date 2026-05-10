@@ -1,0 +1,20 @@
+{
+  "name": "lecolista-api",
+  "version": "0.1.0",
+  "description": "Price lookup API for HSH Mercado / LecoLista — scrapes Mercado Livre via Cheerio, caches in SQLite.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "dependencies": {
+    "@fastify/cors": "^10.0.1",
+    "@fastify/rate-limit": "^10.1.1",
+    "better-sqlite3": "^11.5.0",
+    "cheerio": "^1.0.0",
+    "fastify": "^5.1.0"
+  }
+}

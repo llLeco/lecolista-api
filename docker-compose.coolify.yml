@@ -1,0 +1,30 @@
+# Deploy gerenciado pelo Coolify. Labels Traefik geradas pelo Coolify
+# baseado no domínio configurado na UI (api.devbyle.co).
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    expose:
+      - "3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - HOST=0.0.0.0
+      - DB_PATH=/data/lecolista.db
+      - CORS_ORIGINS=https://lista.devbyle.co
+      - LOG_LEVEL=info
+      - TZ=America/Sao_Paulo
+    volumes:
+      - lecolista-api-data:/data
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O-", "http://localhost:3001/healthz"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  lecolista-api-data:

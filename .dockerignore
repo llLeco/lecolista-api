@@ -1,0 +1,16 @@
+.git
+.github
+.gitignore
+node_modules
+*.log
+.env
+.env.*
+README.md
+DEPLOY.md
+docker-compose.yml
+docker-compose.coolify.yml
+.dockerignore
+Dockerfile
+data
+*.db
+*.db-journal
