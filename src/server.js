@@ -18,9 +18,10 @@ import { getCached, savePrice, bumpStat, getStats, getRecent, normalize } from '
 
 const PORT = Number(process.env.PORT) || 3001;
 const HOST = process.env.HOST || '0.0.0.0';
-// Prefix opcional — quando rodando atrás de Traefik com PathPrefix(/api),
-// todas as rotas viram /api/v1/...  Mesma origem do front, sem CORS.
-const BASE_PATH = process.env.BASE_PATH || '/api';
+// Em produção, Traefik tem PathPrefix(/api) + middleware stripprefix automático
+// (gerado pelo Coolify), então o backend recebe /v1/... limpo.
+// BASE_PATH só é útil pra ambientes onde NÃO há strip-prefix (dev local).
+const BASE_PATH = process.env.BASE_PATH || '';
 const CORS_ORIGINS = (process.env.CORS_ORIGINS || 'https://lista.devbyle.co').split(',').map((s) => s.trim());
 
 const app = Fastify({
