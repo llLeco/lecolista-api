@@ -5,24 +5,32 @@ Mercado Livre via HTML parsing, cacheia em SQLite, expõe via REST.
 
 ```
 Cliente PWA (lista.devbyle.co)
-    ↓ HTTPS
+    ↓ HTTPS (mesmo tunnel, mesmo host)
 Cloudflare Tunnel
     ↓
-Pi:80 → Traefik → api container :3001
-    ↓
-Node 20 + Fastify
-    ↓ scrape on miss (24h TTL)
-lista.mercadolivre.com.br
+Pi:80 → Traefik
+    ├─ Host(lista.devbyle.co)                  → web container :80
+    └─ Host(lista.devbyle.co) && PathPrefix(/api) → api container :3001
+                                                    ↓
+                                              Node + Fastify (BASE_PATH=/api)
+                                                    ↓ scrape on miss (TTL 24h)
+                                              mercado.carrefour.com.br
 ```
+
+**Mesma origem que o front** — front faz `fetch('/api/v1/price?...')` direto,
+sem CORS, sem subdomínio extra, sem rota Cloudflare adicional.
 
 ## Endpoints
 
+Em produção, prefixo `/api` (configurável via env `BASE_PATH`).
+
 | Método | Caminho | Descrição |
 |---|---|---|
-| GET | `/v1/health` | Healthcheck + uptime |
-| GET | `/v1/stats` | Contadores de uso + 20 lookups recentes |
-| GET | `/v1/price?q=leite&refresh=0` | Lookup do menor preço (cached 24h) |
-| POST | `/v1/price/batch` | `{ queries: ["leite","pão"] }` — lookup em lote (max 25) |
+| GET | `/api/v1/health` | Healthcheck + uptime |
+| GET | `/api/v1/stats` | Contadores de uso + 20 lookups recentes |
+| GET | `/api/v1/price?q=leite&refresh=0` | Lookup do menor preço (cached 24h) |
+| POST | `/api/v1/price/batch` | `{ queries: ["leite","pão"] }` — lookup em lote (max 25) |
+| GET | `/healthz` | Healthcheck pra Docker (sem prefix, sem auth) |
 
 ### Resposta `/v1/price`
 
